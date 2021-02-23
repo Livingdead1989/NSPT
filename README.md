@@ -6,13 +6,13 @@ The aim of this project is to create a software solution to perform the automate
 ## Requirements
 
 1. The application must perform automated network security tests.
-2. The tests must check the network device configuration for:
-   3. Telnet must be disabled
-   2. The enable password must be configured
-   3. The SNMP v1 community string should not be “Public”
-4. The user must be able to initiate the test manually
-5. The user must be able to dictate which devices are tested
-6. The automated testing must produce a report of the test results.
-7. This must be show whether each test passed or failed on each device
-8. Test results must be displayed in a report
-9. The platform must use open source software
+1. The tests must check the network device configuration for:
+   * Telnet must be disabled
+   * The enable password must be configured
+   * The SNMP v1 community string should not be “Public”
+1. The user must be able to initiate the test manually
+1. The user must be able to dictate which devices are tested
+1. The automated testing must produce a report of the test results.
+1. This must be show whether each test passed or failed on each device
+1. Test results must be displayed in a report
+1. The platform must use open source software
