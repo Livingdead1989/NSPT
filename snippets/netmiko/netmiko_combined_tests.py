@@ -3,7 +3,7 @@ from netmiko import ConnectHandler
 
 testing_device = {
     'device_type': 'cisco_ios',
-    'host':   '192.168.56.105',
+    'host':   '192.168.56.102',
     'username': 'cisco',
     'password': 'cisco123!'
 }
