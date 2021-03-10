@@ -23,7 +23,7 @@ def enable_secret():
     print(f"I found:\n{command}\n\nResults:")
 
     if command.find("enable secret") != -1:
-        print("Enable password has been configured")
+        print("Enable password has been configured correctly")
     else:
         print("Enable password has not been configured")
 
