@@ -1,10 +1,14 @@
 import getpass
+import colorama
+from colorama import Fore, Back, Style
 from netmiko import ConnectHandler
+
+colorama.init()
 
 device_type = input(((
     'Supported devices:\n'
-    'Vendor\t\tValue\n'
-    'Cisco\t\tcisco_ios\n'
+    'Vendor\t| Value\n'
+    'Cisco\t| cisco_ios\n'
     'Enter device type: '
 )))
 device_host = input('Enter host IPv4 address (192.168.56.105): ')
@@ -21,23 +25,23 @@ testing_device = {
 ## Security Test: Is enable protected by a password?
 def enable_secret():
     try:
-        print("Running Security Test: Is enable protected by a password?")
+        print('Running Security Test: Is enable protected by a password?')
         command = connect.send_command('show running-config | section enable secret')
 
-        print(f"I found:\n{command}\n\nResults:")
+        print(f'I found:\n{command}\n\nResults:')
 
-        if command.find("enable secret") != -1:
-            print("Enable password has been configured correctly")
+        if command.find('enable secret') != -1:
+            print(Fore.RED + 'Enable password has been configured correctly' + Style.RESET_ALL)
         else:
-            print("Enable password has not been configured")
+            print(Fore.GREEN + 'Enable password has not been configured' + Style.RESET_ALL)
     except:
-        print('There has been an error')
+        print(Fore.RED + 'There has been an error' + Style.RESET_ALL)
 
 
 ## Security Test: Is SNMPv1 running with a public community string?
 def snmpv1_public():
     try:
-        print("Running Security Test: Is SNMPv1 running with a public community string?")
+        print('Running Security Test: Is SNMPv1 running with a public community string?')
         command = connect.send_command('show running-config | section snmp-server host')
 
         command_entries = command.split('\n')
@@ -45,7 +49,7 @@ def snmpv1_public():
         for entry in command_entries:
             print(f'I found: {entry}\nResults:')
             if entry.find(' public ') != -1:
-                print('SNMP has been configured with a community string of "public"')
+                print(Fore.RED + 'SNMP has been configured with a community string of public' + Style.RESET_ALL)
                 if entry.find('version 2c') != -1:
                     print('SNMP version 2c in use.\n')
                 elif entry.find('version 3') != -1:
@@ -53,27 +57,27 @@ def snmpv1_public():
                 else:
                     print('SNMP version 1 in use.\n')
             else:
-                print('Community string of public is not in use.\n')
+                print(Fore.GREEN + 'Community string of public is not in use.\n' + Style.RESET_ALL)
     except:
-        print('There has been an error')
+        print(Fore.RED + 'There has been an error' + Style.RESET_ALL)
 
 
 ## Security Test: Is Telnet enabled?
 def telnet_check():
     try:
-        print("Running Security Test: Is Telnet enabled?")
+        print('Running Security Test: Is Telnet enabled?')
         command = connect.send_command('show running-config | section line vty')
 
-        print(f"I found:\n{command}\n\nResults:")
+        print(f'I found:\n{command}\n\nResults:')
 
         if command.find(' telnet') != -1:
-            print('Telnet has been configured!')
+            print(Fore.RED + 'Telnet has been configured!' + Style.RESET_ALL)
         elif command.find(' all') != -1:
-            print('The All transport method is in use, this includes Telnet!')
+            print(Fore.RED + 'The All transport method is in use, this includes Telnet!' + Style.RESET_ALL)
         else:
-            print('Telnet is not in use.')
+            print(Fore.GREEN + 'Telnet is not in use.' + Style.RESET_ALL)
     except:
-        print('There has been an error')
+        print(Fore.RED + 'There has been an error' + Style.RESET_ALL)
 
 
 
@@ -81,11 +85,11 @@ def telnet_check():
 # Main
 try:
     connect = ConnectHandler(**testing_device)
-    print(f'\nConnection to {device_host} established.\n')
+    print(Fore.GREEN + f'\nConnection to {device_host} established.\n' + Style.RESET_ALL)
 except:
-    print(f'\nERROR: Unable to establish connection to device {device_host}.\n')
+    print(Fore.RED + f'\nERROR: Unable to establish connection to device {device_host}.\n' + Style.RESET_ALL)
 else:
-    print('Python security tester\n')
+    print(Fore.YELLOW + 'Python security tester\n' + Style.RESET_ALL)
     perform_test = 0
     while perform_test != range(1,3):
         perform_test = int(input(((
@@ -104,5 +108,5 @@ else:
         elif perform_test == 3:
             telnet_check()
         else:
-            print("EXITING...")
+            print(Fore.YELLOW + 'EXITING...' + Style.RESET_ALL)
             break
