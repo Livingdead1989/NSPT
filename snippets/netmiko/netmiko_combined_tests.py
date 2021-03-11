@@ -1,7 +1,12 @@
 import getpass
 from netmiko import ConnectHandler
 
-device_type = input('Enter device type (cisco_ios): ')
+device_type = input(((
+    'Supported devices:\n'
+    'Vendor\t\tValue\n'
+    'Cisco\t\tcisco_ios\n'
+    'Enter device type: '
+)))
 device_host = input('Enter host IPv4 address (192.168.56.105): ')
 device_username = input('Enter Username (cisco): ')
 device_password = getpass.getpass(prompt='Enter password (cisco123!): ', stream=None)
