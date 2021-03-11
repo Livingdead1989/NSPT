@@ -45,13 +45,13 @@ def snmpv1_public():
             if entry.find(' public ') != -1:
                 print('SNMP has been configured with a community string of "public"')
                 if entry.find('version 2c') != -1:
-                    print('SNMP version 2c in use.')
+                    print('SNMP version 2c in use.\n')
                 elif entry.find('version 3') != -1:
-                    print('SNMP version 3 in use.')
+                    print('SNMP version 3 in use.\n')
                 else:
-                    print('SNMP version 1 in use.')
+                    print('SNMP version 1 in use.\n')
             else:
-                print('Community string of public is not in use.')
+                print('Community string of public is not in use.\n')
     except:
         print('There has been an error')
 
