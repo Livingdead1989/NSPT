@@ -1,0 +1,12 @@
+Device:		192.168.56.101
+Timestamp:		2021-03-12 09:10
+
+Security Test: Is enable protected by a password?
+	Result: Pass
+
+Security Test: Is SNMPv1 running with a public community string?
+	Result: Pass
+
+Security Test: Is Telnet enabled?
+	Result: Pass
+
