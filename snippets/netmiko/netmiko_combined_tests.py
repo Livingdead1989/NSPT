@@ -7,7 +7,6 @@ from colorama import Fore, Back, Style
 colorama.init()
 
 print(Fore.YELLOW + 'Python security tester\n' + Style.RESET_ALL)
-
 ## User Input prompts
 device_type = input(((
     'Supported devices:\n'
@@ -15,7 +14,7 @@ device_type = input(((
     'Cisco\t| cisco_ios\n'
     'Enter device type: '
 )))
-device_host = input('Enter host IPv4 address (192.168.56.105): ')
+device_host = input('Enter host address (192.168.56.105): ')
 device_username = input('Enter Username (cisco): ')
 device_password = getpass.getpass(prompt='Enter password (cisco123!): ', stream=None)
 
@@ -123,7 +122,7 @@ else:
     
     # Time stamping
     now = datetime.now()
-    timestamp_format = "%Y-%m-%d %H:%M"
+    timestamp_format = "%Y-%m-%d %H-%M"
     timestamp = now.strftime(timestamp_format)
 
     while perform_test != range(1,4):
