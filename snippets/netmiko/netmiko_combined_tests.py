@@ -1,28 +1,29 @@
-import getpass
 from time import time
+from datetime import datetime
+from netmiko import ConnectHandler
+import getpass
 import colorama
 from colorama import Fore, Back, Style
-from netmiko import ConnectHandler
-from datetime import datetime
-
 colorama.init()
 
+print(Fore.YELLOW + 'Python security tester\n' + Style.RESET_ALL)
+
 ## User Input prompts
-# device_type = input(((
-#     'Supported devices:\n'
-#     'Vendor\t| Value\n'
-#     'Cisco\t| cisco_ios\n'
-#     'Enter device type: '
-# )))
-# device_host = input('Enter host IPv4 address (192.168.56.105): ')
-# device_username = input('Enter Username (cisco): ')
-# device_password = getpass.getpass(prompt='Enter password (cisco123!): ', stream=None)
+device_type = input(((
+    'Supported devices:\n'
+    'Vendor\t| Value\n'
+    'Cisco\t| cisco_ios\n'
+    'Enter device type: '
+)))
+device_host = input('Enter host IPv4 address (192.168.56.105): ')
+device_username = input('Enter Username (cisco): ')
+device_password = getpass.getpass(prompt='Enter password (cisco123!): ', stream=None)
 
 ## Hardcoded Inputs
-device_type = 'cisco_ios'
-device_host = '192.168.56.101'
-device_username = 'cisco'
-device_password = 'cisco123!'
+# device_type = 'cisco_ios'
+# device_host = '192.168.56.101'
+# device_username = 'cisco'
+# device_password = 'cisco123!'
 
 testing_device = {
     'device_type': device_type,
@@ -34,8 +35,8 @@ testing_device = {
 ## Security Test: Is enable protected by a password?
 def enable_secret():
     try:
-        print('Running Security Test: Is enable protected by a password?')
-        command = connect.send_command('show running-config | section enable secret')
+        print(Fore.YELLOW + 'Running Security Test: Is enable protected by a password?' + Style.RESET_ALL)
+        command = connect.send_command('show running-config | include enable secret')
         print('I found:\n' + Fore.CYAN + command + Style.RESET_ALL + '\n\nResults:')
 
         if command.find('enable secret') != -1:
@@ -51,27 +52,37 @@ def enable_secret():
 ## Security Test: Is SNMPv1 running with a public community string?
 def snmpv1_public():
     try:
-        print('Running Security Test: Is SNMPv1 running with a public community string?')
-        command = connect.send_command('show running-config | section snmp-server host')
-        command_entries = command.split('\n')
+        print(Fore.YELLOW + 'Running Security Test: Is SNMPv1 running with a public community string?' + Style.RESET_ALL)
+        command = connect.send_command('show running-config | include snmp-server')
+        command_entries = command.split('\n') # Splits the output by new line and adds to a list
+
+        failed_count = 0
 
         for entry in command_entries:
-            print('I found:\n' + Fore.CYAN + command + Style.RESET_ALL + '\n\nResults:')
+            print('I found:\n' + Fore.CYAN + entry + Style.RESET_ALL + '\n\nResults:')
             
-            if entry.find(' public ') != -1:
+            if entry.find(' public ') != -1: # match was found, -1 is returned if no match was found using find, we reverse this using not equal !=
                 print(Fore.RED + 'SNMP has been configured with a community string of public' + Style.RESET_ALL)
                 if entry.find('version 2c') != -1:
                     print(Fore.GREEN + 'SNMP version 2c in use.\n' + Style.RESET_ALL)
-                    return 'Pass'
                 elif entry.find('version 3') != -1:
                     print(Fore.GREEN + 'SNMP version 3 in use.\n' + Style.RESET_ALL)
-                    return 'Pass'
                 else:
                     print(Fore.RED + 'SNMP version 1 in use.\n' + Style.RESET_ALL)
-                    return 'Fail'
+                    failed_count += 1 # if a failed result is found add 1 to the variable
             else:
                 print(Fore.GREEN + 'Community string of public is not in use.\n' + Style.RESET_ALL)
-                return 'Pass'
+            
+            print(f'Number of failures: {failed_count}')
+
+        # Fail marking, each line of config is evaluated seperately with an incrementing fail counter
+        if failed_count >= 1:
+            return 'Fail'
+        elif failed_count == 0:
+            return 'Pass'
+        else:
+            return 'Error'
+            
     except:
         print(Fore.RED + 'There has been an error' + Style.RESET_ALL)
 
@@ -80,8 +91,8 @@ def snmpv1_public():
 
 def telnet_check():
     try:
-        print('Running Security Test: Is Telnet enabled?')
-        command = connect.send_command('show running-config | section line vty')
+        print(Fore.YELLOW + 'Running Security Test: Is Telnet enabled?' + Style.RESET_ALL)
+        command = connect.send_command('show running-config | include transport input')
 
         print('I found:\n' + Fore.CYAN + command + Style.RESET_ALL + '\n\nResults:')
 
@@ -105,9 +116,9 @@ try:
     connect = ConnectHandler(**testing_device)
     print(Fore.GREEN + f'\nConnection to {device_host} established.\n' + Style.RESET_ALL)
 except:
-    print(Fore.RED + f'\nERROR: Unable to establish connection to device {device_host}.\n' + Style.RESET_ALL)
+    print(Fore.RED + f'\nERROR: Unable to establish connection to device {device_host}. Please check your credentials.\n' + Style.RESET_ALL)
 else:
-    print(Fore.YELLOW + 'Python security tester\n' + Style.RESET_ALL)
+    
     perform_test = 0
     
     # Time stamping
