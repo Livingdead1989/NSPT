@@ -17,7 +17,7 @@ print(((
 ## Netmiko ConnectHandler user inputs
 ## Supported device validation
 while True:
-    supported_devices = ('cisco_ios','aruba')
+    supported_devices = ('cisco_ios','aruba_os','hp_procurve')
     device_type = input(((
         'Supported devices:\n'
         'Vendor\t| Value\n'
