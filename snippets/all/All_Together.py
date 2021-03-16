@@ -33,12 +33,15 @@ class Ui_MainWindow(object):
         def checkTelnet():
             command = connect.send_command('show running-config | include transport input')    
             if command.find(' telnet') != -1:
+                print('--------------------------------')
                 print('Telnet   |   Telnet has been configured!\n')
                 return 'Fail'
             elif command.find(' all') != -1:
+                print('--------------------------------')
                 print('Telnet   |   The All transport method is in use, this includes Telnet!\n')
                 return 'Fail'
             else:
+                print('--------------------------------')
                 print('Telnet   |   Telnet is not in use.\n')
                 return 'Pass'
                 
@@ -47,9 +50,11 @@ class Ui_MainWindow(object):
         def checkExec():
             command = connect.send_command('show running-config | include enable secret')
             if command.find('enable secret') != -1:
+                print('--------------------------------')
                 print('Exec     |   Pass')
                 return 'Pass'
             else:
+                print('--------------------------------')
                 print('Exec     |   Fail... Enable password incorrectly configured.')
                 return 'Fail'
 
@@ -62,6 +67,7 @@ class Ui_MainWindow(object):
 
             for entry in command_entries:
                 if entry.find(' public ') != -1:
+                    print('--------------------------------')
                     print('SNMP     |   has been configured with a community string of public')
                     if entry.find('version 2c') != -1:
                         print('SNMP     |   version 2c in use.')
@@ -71,6 +77,7 @@ class Ui_MainWindow(object):
                         print('SNMP     |   version 1 in use.')
                         failed_count += 1
                 else:
+                    print('--------------------------------')
                     print('SNMP     |   Community string of public is not in use.')
 
             if failed_count >= 1:
@@ -95,11 +102,14 @@ class Ui_MainWindow(object):
             report.write(f'Device:\t\t{self.host_device_input.text()}\n\n')
             report.write(f'Timestamp:\t\t{timestamp}\n\n')
             if self.security_test_telnet_check.isChecked():
-                report.write(f'Security Test: Is Telnet enabled?\tResult: {checkTelnet()}\n\n')
+                report.write(f'Security Test: Is Telnet enabled?\t\tResult: {checkTelnet()}\n\n')
+                report.write('--------------------------------\n\n')
             if self.security_test_password_check.isChecked():
-                report.write(f'Security Test: Is enable protected by a password?\tResult: {checkExec()}\n\n')
+                report.write(f'Security Test: Is enable protected by a password?\t\tResult: {checkExec()}\n\n')
+                report.write('--------------------------------\n\n')
             if self.security_test_snmp_check.isChecked():  
-                report.write(f'Security Test: Is SNMPv1 running with a public community string?\tResult: {checkSNMP()}\n\n')
+                report.write(f'Security Test: Is SNMPv1 running with a public community string?\t\tResult: {checkSNMP()}\n\n')
+                report.write('--------------------------------\n\n')
             report.close()
             print(f'Report Exported to {self.save_report_location_input.text()}')
             sys.exit(app.exec_())
@@ -239,11 +249,11 @@ class Ui_MainWindow(object):
         self.security_test_password_check.setText(_translate("MainWindow", "Is a privileged exec password set?"))
         self.security_test_snmp_check.setText(_translate("MainWindow", "Is SNMPv1 \"public\" in use?"))
         self.host_device_label.setText(_translate("MainWindow", "Host Device (IPv4 or Hostname)"))
-        self.device_type_combo.setItemText(0, _translate("MainWindow", "Juniper JUNOS"))
-        self.device_type_combo.setItemText(1, _translate("MainWindow", "Cisco IOS"))
+        self.device_type_combo.setItemText(0, _translate("MainWindow", "Cisco IOS"))
+        self.device_type_combo.setItemText(1, _translate("MainWindow", "Juniper JUNOS"))
         self.password_label.setText(_translate("MainWindow", "Password"))
         self.security_test_label.setText(_translate("MainWindow", "Security Tests"))
-        self.ssh_port_label.setText(_translate("MainWindow", "SSH Port"))
+        self.ssh_port_label.setText(_translate("MainWindow", "SSH Port (Default 22)"))
         self.device_type_label.setText(_translate("MainWindow", "Device Type"))
         self.username_label.setText(_translate("MainWindow", "Username"))
         self.save_report_location_label.setText(_translate("MainWindow", "Save Report Location"))
