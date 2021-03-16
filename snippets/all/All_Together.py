@@ -27,25 +27,20 @@ class Ui_MainWindow(object):
             'password': self.password_input.text()
         }
         connect = ConnectHandler(**cisco)
-
-        # Variable Setup
-        testedTelnet = None
-        testedExec = None
-        testedSNMP = None
-
-
+        
+        
         # ======== Check Telnet Status Function ========
         def checkTelnet():
-            command = connect.send_command('show running-config | section line vty')
+            command = connect.send_command('show running-config | include transport input')    
             if command.find(' telnet') != -1:
-                print('Telnet       |   Found!')
-                testedTelnet = 'Telenet     |   Found'
+                print('Telnet   |   Telnet has been configured!\n')
+                return 'Fail'
             elif command.find(' all') != -1:
-                print('Telnet       |   All Found!')
-                testedTelnet = 'Telnet      |   All Found'
+                print('Telnet   |   The All transport method is in use, this includes Telnet!\n')
+                return 'Fail'
             else:
-                print('Telnet   |   Something else found!')
-                testedTelnet = 'Telnet  |   Something else found!'
+                print('Telnet   |   Telnet is not in use.\n')
+                return 'Pass'
                 
 
         # ======== Check Privileged Exec Function ========
@@ -53,10 +48,10 @@ class Ui_MainWindow(object):
             command = connect.send_command('show running-config | include enable secret')
             if command.find('enable secret') != -1:
                 print('Exec     |   Pass')
-                testedExec = 'Pass'
+                return 'Pass'
             else:
                 print('Exec     |   Fail... Enable password incorrectly configured.')
-                testedExec = 'Fail'
+                return 'Fail'
 
 
         # ======== Check SNMP Function ========
@@ -80,23 +75,10 @@ class Ui_MainWindow(object):
 
             if failed_count >= 1:
                 print(f'SNMP    |   Fail... {failed_count} failures detected')
-                testedSNMP = 'Fail'
+                return 'Fail'
             elif failed_count == 0:
                 print('SNMP     |   Pass')
-                testedSNMP = 'Pass'
-
-
-        # ======== Loop Through Selected Functions ========
-        if self.security_test_telnet_check.isChecked():
-            print('------------------------------------------------')
-            checkTelnet()
-        if self.security_test_password_check.isChecked():
-            print('------------------------------------------------')
-            checkExec()
-        if self.security_test_snmp_check.isChecked():
-            print('------------------------------------------------')
-            checkSNMP()
-            print('------------------------------------------------')
+                return 'Pass'
 
 
         # ======== Produce & Export Report ========
@@ -112,12 +94,12 @@ class Ui_MainWindow(object):
 
             report.write(f'Device:\t\t{self.host_device_input.text()}\n\n')
             report.write(f'Timestamp:\t\t{timestamp}\n\n')
+            if self.security_test_telnet_check.isChecked():
+                report.write(f'Security Test: Is Telnet enabled?\tResult: {checkTelnet()}\n\n')
             if self.security_test_password_check.isChecked():
-                report.write(f'Security Test: Is Telnet enabled?\tResult: {testedTelnet}\n\n')
-            if self.security_test_password_check.isChecked():
-                report.write(f'Security Test: Is enable protected by a password?\tResult: {testedExec}\n\n')
+                report.write(f'Security Test: Is enable protected by a password?\tResult: {checkExec()}\n\n')
             if self.security_test_snmp_check.isChecked():  
-                report.write(f'Security Test: Is SNMPv1 running with a public community string?\tResult: {testedSNMP}\n\n')
+                report.write(f'Security Test: Is SNMPv1 running with a public community string?\tResult: {checkSNMP()}\n\n')
             report.close()
             print(f'Report Exported to {self.save_report_location_input.text()}')
             sys.exit(app.exec_())
