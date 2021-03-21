@@ -53,17 +53,25 @@ testing_device = {
 def enable_secret():
     try:
         print(Fore.YELLOW + 'Running Security Test: Is enable protected by a password?' + Style.RESET_ALL)
+        
         command = connect.send_command('show running-config | include enable secret')
+    
         print('I found:\n' + Fore.CYAN + command + Style.RESET_ALL + '\n\nResults:')
 
-        if command.find('enable secret') != -1:
+
+        if 'enable secret' in command.lower(): ## check for keyword in command output
             print(Fore.GREEN + 'Enable password has been configured correctly\n' + Style.RESET_ALL)
             return 'Pass'
+        elif 'error' in command.lower() or 'invalid' in command.lower(): ## check for error keywords in command output
+            print(Fore.RED + 'There has been an error\n' + Style.RESET_ALL)
+            return 'Error'
         else:
             print(Fore.RED + 'Enable password has not been configured\n' + Style.RESET_ALL)
             return 'Fail'
+
     except: ## error catching
         print(Fore.RED + 'There has been an error' + Style.RESET_ALL)
+        return 'Error'
 
 
 ## Security Test: Is SNMPv1 running with a public community string?
