@@ -86,11 +86,14 @@ def snmpv1_public():
         for entry in command_entries:
             print('I found:\n' + Fore.CYAN + entry + Style.RESET_ALL + '\n\nResults:')
             
-            if entry.find(' public ') != -1: # match was found, -1 is returned if no match was found using find, we reverse this using not equal !=
+
+            if ' public ' in entry: # match was found
                 print(Fore.RED + 'SNMP has been configured with a community string of public' + Style.RESET_ALL)
-                if entry.find('version 2c') != -1:
+
+
+                if 'version 2c' in entry:
                     print(Fore.GREEN + 'SNMP version 2c in use.\n' + Style.RESET_ALL)
-                elif entry.find('version 3') != -1:
+                elif 'version 3' in entry:
                     print(Fore.GREEN + 'SNMP version 3 in use.\n' + Style.RESET_ALL)
                 else:
                     print(Fore.RED + 'SNMP version 1 in use.\n' + Style.RESET_ALL)
@@ -120,10 +123,10 @@ def telnet_check():
 
         print('I found:\n' + Fore.CYAN + command + Style.RESET_ALL + '\n\nResults:')
 
-        if command.find(' telnet') != -1:
+        if ' telnet' in command:
             print(Fore.RED + 'Telnet has been configured!\n' + Style.RESET_ALL)
             return 'Fail'
-        elif command.find(' all') != -1:
+        elif ' all' in command:
             print(Fore.RED + 'The All transport method is in use, this includes Telnet!\n' + Style.RESET_ALL)
             return 'Fail'
         else:
