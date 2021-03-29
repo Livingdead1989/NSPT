@@ -1,6 +1,14 @@
-# Telnet Security Check Demo
+#!/usr/bin/python3
+
+## Telnet Security Check Demo
+import argparse
 from telnetlib import Telnet
 
+parser = argparse.ArgumentParser(description='ArgParse')
+parser.add_argument('host', metavar='host', type=str, help='Enter your host device address')
+args = parser.parse_args()
+
+host = args.host
 
 def telnetCheck(host, port=23):
     try:
@@ -10,7 +18,6 @@ def telnetCheck(host, port=23):
             tn.close()
         return f'Telnet Enabled on {host}'
     except:
-        return f'Telnet Error on {host}'
+        return f'Telnet Disabled on {host}'
 
-
-print(telnetCheck('192.168.56.102'))
+print(telnetCheck(host))
