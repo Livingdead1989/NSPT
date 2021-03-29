@@ -19,102 +19,119 @@ class Ui_MainWindow(object):
 
     # ======== Run Report Function ========
     def runReport(self):
-        # Connection to Device
-        cisco = {
-            'device_type': 'cisco_ios',
+
+        # ======== Connection to Device ========
+        if(self.device_type_combo.currentText() == 'Cisco IOS'):
+            login_device = 'cisco_ios'
+        if(self.device_type_combo.currentText() == 'Juniper JUNOS'):
+            login_device = 'juniper_junos'
+        login = {
+            'device_type': login_device,
             'host':   self.host_device_input.text(),
             'username': self.username_input.text(),
             'password': self.password_input.text()
         }
-        connect = ConnectHandler(**cisco)
-        
-        
-        # ======== Check Telnet Status Function ========
-        def checkTelnet():
-            command = connect.send_command('show running-config | include transport input')    
-            if command.find(' telnet') != -1:
-                print('--------------------------------')
-                print('Telnet   |   Telnet has been configured!\n')
-                return 'Fail'
-            elif command.find(' all') != -1:
-                print('--------------------------------')
-                print('Telnet   |   The All transport method is in use, this includes Telnet!\n')
-                return 'Fail'
-            else:
-                print('--------------------------------')
-                print('Telnet   |   Telnet is not in use.\n')
-                return 'Pass'
-                
-
-        # ======== Check Privileged Exec Function ========
-        def checkExec():
-            command = connect.send_command('show running-config | include enable secret')
-            if command.find('enable secret') != -1:
-                print('--------------------------------')
-                print('Exec     |   Pass')
-                return 'Pass'
-            else:
-                print('--------------------------------')
-                print('Exec     |   Fail... Enable password incorrectly configured.')
-                return 'Fail'
+        connect = ConnectHandler(**login)
 
 
-        # ======== Check SNMP Function ========
-        def checkSNMP():
-            command = connect.send_command('show running-config | include snmp-server')
-            command_entries = command.split('\n')
-            failed_count = 0
-
-            for entry in command_entries:
-                if entry.find(' public ') != -1:
+        # ======== Report - Cisco ========
+        def cisco():         
+            # ======== Check Telnet Status Function ========
+            def checkTelnet():
+                command = connect.send_command('show running-config | include transport input')    
+                if command.find(' telnet') != -1:
                     print('--------------------------------')
-                    print('SNMP     |   has been configured with a community string of public')
-                    if entry.find('version 2c') != -1:
-                        print('SNMP     |   version 2c in use.')
-                    elif entry.find('version 3') != -1:
-                        print('SNMP     |   version 3 in use.')
-                    else:
-                        print('SNMP     |   version 1 in use.')
-                        failed_count += 1
+                    print('Telnet   |   Telnet has been configured!\n')
+                    return 'Fail'
+                elif command.find(' all') != -1:
+                    print('--------------------------------')
+                    print('Telnet   |   The All transport method is in use, this includes Telnet!\n')
+                    return 'Fail'
                 else:
                     print('--------------------------------')
-                    print('SNMP     |   Community string of public is not in use.')
+                    print('Telnet   |   Telnet is not in use.\n')
+                    return 'Pass'
 
-            if failed_count >= 1:
-                print(f'SNMP    |   Fail... {failed_count} failures detected')
-                return 'Fail'
-            elif failed_count == 0:
-                print('SNMP     |   Pass')
-                return 'Pass'
+
+            # ======== Check Privileged Exec Function ========
+            def checkExec():
+                command = connect.send_command('show running-config | include enable secret')
+                if command.find('enable secret') != -1:
+                    print('--------------------------------')
+                    print('Exec     |   Pass')
+                    return 'Pass'
+                else:
+                    print('--------------------------------')
+                    print('Exec     |   Fail... Enable password incorrectly configured.')
+                    return 'Fail'
+
+
+            # ======== Check SNMP Function ========
+            def checkSNMP():
+                command = connect.send_command('show running-config | include snmp-server')
+                command_entries = command.split('\n')
+                failed_count = 0
+
+                for entry in command_entries:
+                    if entry.find(' public ') != -1:
+                        print('--------------------------------')
+                        print('SNMP     |   has been configured with a community string of public')
+                        if entry.find('version 2c') != -1:
+                            print('SNMP     |   version 2c in use.')
+                        elif entry.find('version 3') != -1:
+                            print('SNMP     |   version 3 in use.')
+                        else:
+                            print('SNMP     |   version 1 in use.')
+                            failed_count += 1
+                    else:
+                        print('--------------------------------')
+                        print('SNMP     |   Community string of public is not in use.')
+
+                if failed_count >= 1:
+                    print(f'SNMP    |   Fail... {failed_count} failures detected')
+                    return 'Fail'
+                elif failed_count == 0:
+                    print('SNMP     |   Pass')
+                    return 'Pass'
+            exportReport(checkTelnet(), checkExec(), checkSNMP())
+
+
+
+
+        # ======== Report - Juniper ========
+
 
 
         # ======== Produce & Export Report ========
-        def exportReport():
+        def exportReport(telnet_, exec_, snmp_):
             now = datetime.now()
             timestamp_format = "%Y-%m-%d %H-%M"
             timestamp = now.strftime(timestamp_format)
-
             hostname = self.host_device_input.text()
             filename = f'Report - {timestamp} - Device - {hostname}'
             reportPath = os.path.join(self.save_report_location_input.text(), filename+'.txt')
             report = open(reportPath,'w')
-
             report.write(f'Device:\t\t{self.host_device_input.text()}\n\n')
             report.write(f'Timestamp:\t\t{timestamp}\n\n')
             if self.security_test_telnet_check.isChecked():
-                report.write(f'Security Test: Is Telnet enabled?\t\tResult: {checkTelnet()}\n\n')
+                report.write(f'Security Test: Is Telnet enabled?\t\tResult: {telnet_}\n\n')
                 report.write('--------------------------------\n\n')
             if self.security_test_password_check.isChecked():
-                report.write(f'Security Test: Is enable protected by a password?\t\tResult: {checkExec()}\n\n')
+                report.write(f'Security Test: Is enable protected by a password?\t\tResult: {exec_}\n\n')
                 report.write('--------------------------------\n\n')
             if self.security_test_snmp_check.isChecked():  
-                report.write(f'Security Test: Is SNMPv1 running with a public community string?\t\tResult: {checkSNMP()}\n\n')
+                report.write(f'Security Test: Is SNMPv1 running with a public community string?\t\tResult: {snmp_}\n\n')
                 report.write('--------------------------------\n\n')
             report.close()
             print(f'Report Exported to {self.save_report_location_input.text()}')
             sys.exit(app.exec_())
-        
-        exportReport()
+
+
+        # ======== Check if Running Junos or Cisco Check ========
+        if(self.device_type_combo.currentText() == 'Cisco IOS'):
+            cisco()
+        if(self.device_type_combo.currentText() == 'Juniper JUNOS'):
+            print('Juniper')
 
 
 
