@@ -1,25 +1,23 @@
 #!/usr/bin/python3
-
 import argparse
 from telnetlib import Telnet
 from netmiko import ConnectHandler
 from pysnmp.hlapi import getCmd, SnmpEngine, CommunityData, UdpTransportTarget, ContextData, ObjectType, ObjectIdentity
 
-
 parser = argparse.ArgumentParser(description='ArgParse')
-parser.add_argument('device_type', metavar='device_type', type=str, help='Enter your device type')
-parser.add_argument('host', metavar='host', type=str, help='Enter your host device address')
-parser.add_argument('username', metavar='username', type=str, help='Enter your SSH username')
-parser.add_argument('password', metavar='password', type=str, help='Enter your SSH password')
-args = parser.parse_args()
+parser.add_argument('--d', metavar='Device Type', type=str, required=True, help='Enter your device type such as cisco_ios')
+parser.add_argument('--h', metavar='Host Address', type=str, required=True, help='Enter your host device address')
+parser.add_argument('--u', metavar='Username', type=str, required=True, help='Enter your SSH username')
+parser.add_argument('--p', metavar='Password', type=str, required=True, help='Enter your SSH password')
+args = parser.parse_args() # -h for help
 
-device_type = args.device_type
-host = args.host
-username = args.username
-password = args.password
+device_type = args.d.lower()
+host = args.h
+username = args.u
+password = args.p
 
 ##############################################################
-##############################################################
+## TELNET TEST ###############################################
 
 def telnetCheck(host, port=23):
     try:
@@ -31,7 +29,7 @@ def telnetCheck(host, port=23):
         return f'PASSED: Telnet Disabled on {host}'
 
 ##############################################################
-##############################################################
+## PRIVILEGE EXEC PASSWORD TEST ##############################
 
 def privilegedCheck(host, username, password):
 
@@ -53,7 +51,7 @@ def privilegedCheck(host, username, password):
         return f'FAILED: Privilege Exec does not have a password enabled on {host}.'
 
 ##############################################################
-##############################################################
+## SNMP TEST #################################################
 
 def snmpCheck(host):
     iterator = getCmd(
@@ -77,10 +75,13 @@ def snmpCheck(host):
             return f'FAILED: SNMP response received on {host}.'
 
 ##############################################################
-##############################################################
+## MAIN ######################################################
 
-print('Python Security Tester\n\n')
+def main():
+    print('Python Security Tester\n\n')
+    print(telnetCheck(host))
+    print(privilegedCheck(host, username, password))
+    print(snmpCheck(host))
 
-print(telnetCheck(host))
-print(privilegedCheck(host, username, password))
-print(snmpCheck(host))
+if __name__ == '__main__':
+    main()
