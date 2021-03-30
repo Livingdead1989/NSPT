@@ -21,12 +21,13 @@ class Ui_MainWindow(object):
     def runReport(self):
 
         # ======== Connection to Device ========
-        if(self.device_type_combo.currentText() == 'Cisco IOS'):
-            login_device = 'cisco_ios'
-        if(self.device_type_combo.currentText() == 'Juniper JUNOS'):
-            login_device = 'juniper_junos'
+        device_dict = dict([
+            ('HP Procurve', 'hp_procurve'),
+            ('Cisco IOS', 'cisco_ios'),
+            ('Aruba OS', 'aruba_os')
+        ])
         login = {
-            'device_type': login_device,
+            'device_type': device_dict[self.device_type_combo.currentText()],
             'host':   self.host_device_input.text(),
             'username': self.username_input.text(),
             'password': self.password_input.text()
@@ -35,7 +36,7 @@ class Ui_MainWindow(object):
 
 
         # ======== Report - Cisco ========
-        def cisco():         
+        def runChecks():         
             # ======== Check Telnet Status Function ========
             def checkTelnet():
                 command = connect.send_command('show running-config | include transport input')    
@@ -96,12 +97,6 @@ class Ui_MainWindow(object):
             exportReport(checkTelnet(), checkExec(), checkSNMP())
 
 
-
-
-        # ======== Report - Juniper ========
-
-
-
         # ======== Produce & Export Report ========
         def exportReport(telnet_, exec_, snmp_):
             now = datetime.now()
@@ -126,12 +121,9 @@ class Ui_MainWindow(object):
             print(f'Report Exported to {self.save_report_location_input.text()}')
             sys.exit(app.exec_())
 
-
-        # ======== Check if Running Junos or Cisco Check ========
-        if(self.device_type_combo.currentText() == 'Cisco IOS'):
-            cisco()
-        if(self.device_type_combo.currentText() == 'Juniper JUNOS'):
-            print('Juniper')
+        
+        runChecks()
+        
 
 
 
@@ -169,6 +161,7 @@ class Ui_MainWindow(object):
         self.inputs_layout.addWidget(self.host_device_label, 3, 0, 1, 1)
         self.device_type_combo = QtWidgets.QComboBox(self.gridLayoutWidget)
         self.device_type_combo.setObjectName("device_type_combo")
+        self.device_type_combo.addItem("")
         self.device_type_combo.addItem("")
         self.device_type_combo.addItem("")
         self.inputs_layout.addWidget(self.device_type_combo, 2, 3, 1, 1)
@@ -243,6 +236,8 @@ class Ui_MainWindow(object):
         self.reset_button.clicked.connect(self.username_input.clear)
         self.reset_button.clicked.connect(self.password_input.clear)
         self.reset_button.clicked.connect(self.save_report_location_input.clear)
+        
+        self.exit_button.clicked.connect(self.exitFunc)
 
         # ======== Get Results Functionality ========
         self.run_button.clicked.connect(self.runReport)
@@ -266,12 +261,13 @@ class Ui_MainWindow(object):
         self.security_test_password_check.setText(_translate("MainWindow", "Is a privileged exec password set?"))
         self.security_test_snmp_check.setText(_translate("MainWindow", "Is SNMPv1 \"public\" in use?"))
         self.host_device_label.setText(_translate("MainWindow", "Host Device (IPv4 or Hostname)"))
+        self.device_type_label.setText(_translate("MainWindow", "Device Type"))
         self.device_type_combo.setItemText(0, _translate("MainWindow", "Cisco IOS"))
-        self.device_type_combo.setItemText(1, _translate("MainWindow", "Juniper JUNOS"))
+        self.device_type_combo.setItemText(1, _translate("MainWindow", "HP Procurve"))
+        self.device_type_combo.setItemText(2, _translate("MainWindow", "Aruba OS"))
         self.password_label.setText(_translate("MainWindow", "Password"))
         self.security_test_label.setText(_translate("MainWindow", "Security Tests"))
         self.ssh_port_label.setText(_translate("MainWindow", "SSH Port (Default 22)"))
-        self.device_type_label.setText(_translate("MainWindow", "Device Type"))
         self.username_label.setText(_translate("MainWindow", "Username"))
         self.save_report_location_label.setText(_translate("MainWindow", "Save Report Location"))
         self.run_button.setText(_translate("MainWindow", "Run Security Tests"))
@@ -281,6 +277,8 @@ class Ui_MainWindow(object):
         self.actionExport_as_JSON.setText(_translate("MainWindow", "Export as JSON"))
         self.actionExport_as_CSV.setText(_translate("MainWindow", "Export as CSV"))
 
+    def exitFunc(self):
+        sys.exit(app.exec_()) 
 
 if __name__ == "__main__":
     import sys
