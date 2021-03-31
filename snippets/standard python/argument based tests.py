@@ -16,6 +16,8 @@ host = args.h
 username = args.u
 password = args.p
 
+hpe_devices = ('aruba_os','aruba_osswitch','aruba_procurve','hp_comware','hp_procurve')
+
 ##############################################################
 ## TELNET TEST ###############################################
 
@@ -33,22 +35,28 @@ def telnetCheck(host, port=23):
 
 def privilegedCheck(host, username, password):
 
-    testing_device = {
-    'device_type': device_type,
-    'host':   host,
-    'username': username,
-    'password': password
-    }
+    try:
+        testing_device = {
+        'device_type': device_type,
+        'host':   host,
+        'username': username,
+        'password': password
+        }
 
-    connect = ConnectHandler(**testing_device)  
-    command = connect.send_command('show running-config | include enable secret')
-
-    if 'enable secret' in command.lower(): ## check for keyword in command output
-        return f'PASSED: Privilege Exec has a password enabled on {host}.'
-    elif 'error' in command.lower() or 'invalid' in command.lower(): ## check for error keywords in command output
-        return f'ERROR: There has been an error on {host}.'
+        connect = ConnectHandler(**testing_device)
+        if device_type in hpe_devices: ## Check for HPE devices which use a different syntax
+            command = connect.send_command('show running-config | include password manager')
+        else:
+            command = connect.send_command('show running-config | include enable secret')
+    except:
+        return f'ERROR connecting to device {host} using SSH.'
     else:
-        return f'FAILED: Privilege Exec does not have a password enabled on {host}.'
+        if 'enable secret' or 'password manager' in command.lower(): ## check for keyword in command output
+            return f'PASSED: Privilege Exec mode is protected by a password on {host}.'
+        elif 'error' in command.lower() or 'invalid' in command.lower(): ## check for error keywords in command output
+            return f'ERROR: There has been an error on {host}.'
+        else:
+            return f'FAILED: Privilege Exec does not have a password enabled on {host}.'
 
 ##############################################################
 ## SNMP TEST #################################################
@@ -78,7 +86,7 @@ def snmpCheck(host):
 ## MAIN ######################################################
 
 def main():
-    print('Python Security Tester\n\n')
+    print('\nPython Security Tester\n')
     print(telnetCheck(host))
     print(privilegedCheck(host, username, password))
     print(snmpCheck(host))
