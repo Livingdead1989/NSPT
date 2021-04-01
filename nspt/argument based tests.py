@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import argparse
+import os, argparse
 from datetime import datetime
 from telnetlib import Telnet
 from netmiko import ConnectHandler
@@ -12,6 +12,7 @@ parser.add_argument('-u', metavar='Username', type=str, help='Enter your SSH use
 parser.add_argument('-p', metavar='Password', type=str, help='Enter your SSH password')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-r', '--report', action='store_true', help='Produce a text file report')
+parser.add_argument('--path', help='Path where the report should be saved to')
 group.add_argument('-v', '--verbose', action='store_true', help='Do not print to standard output')
 args = parser.parse_args() # -h for help
 
@@ -110,6 +111,13 @@ def report(telnet_result, privileged_result, snmp_result):
     now = datetime.now()
     timestamp_format = "%Y-%m-%d %H-%M"
     timestamp = now.strftime(timestamp_format)
+
+    if args.path:
+        try:
+            os.chdir(args.path)
+        except:
+            os.chdir(os.getcwd())
+            print('Error with report path, report has been save to current working directory.')
 
     report = open(f'Report - {timestamp} - Device - {host}.txt','w')
     report.write(f'Device:\t\t{host}\n')
