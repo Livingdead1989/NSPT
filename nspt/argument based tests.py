@@ -27,12 +27,12 @@ hpe_devices = ('aruba_os','aruba_osswitch','aruba_procurve','hp_comware','hp_pro
 
 def telnetCheck(host, port=23):
     try:
-        with Telnet(host, port) as tn:
-            tn.read_some()
-            tn.close()
-        return f'FAILED: Telnet Enabled on {host}'
+        Telnet.open(host,port,timeout=3) ## Timeout to prevent large hang times
     except:
         return f'PASSED: Telnet Disabled on {host}'
+    else:
+        Telnet.close()
+        return f'FAILED: Telnet Enabled on {host}'
 
 ##############################################################
 ## PRIVILEGE EXEC PASSWORD TEST ##############################
@@ -93,6 +93,7 @@ def main():
     telnet_result = telnetCheck(host)
     privileged_result = privilegedCheck(host, username, password)
     snmp_result = snmpCheck(host)
+    
     if args.verbose:
         print('\nPython Security Tester\n')
         print(telnet_result)
