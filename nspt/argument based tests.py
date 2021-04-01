@@ -1,18 +1,22 @@
 #!/usr/bin/python3
 import argparse
+from datetime import datetime
 from telnetlib import Telnet
 from netmiko import ConnectHandler
 from pysnmp.hlapi import getCmd, SnmpEngine, CommunityData, UdpTransportTarget, ContextData, ObjectType, ObjectIdentity
 
 parser = argparse.ArgumentParser(description='ArgParse')
-parser.add_argument('--d', metavar='Device Type', type=str, required=True, help='Enter your device type such as cisco_ios')
-parser.add_argument('--h', metavar='Host Address', type=str, required=True, help='Enter your host device address')
-parser.add_argument('--u', metavar='Username', type=str, required=True, help='Enter your SSH username')
-parser.add_argument('--p', metavar='Password', type=str, required=True, help='Enter your SSH password')
+parser.add_argument('host', metavar='Host Address', type=str, help='Enter your host device address')
+parser.add_argument('-d', metavar='Device Type', type=str, help='Enter your device type such as cisco_ios')
+parser.add_argument('-u', metavar='Username', type=str, help='Enter your SSH username')
+parser.add_argument('-p', metavar='Password', type=str, help='Enter your SSH password')
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-r', '--report', action='store_true', help='Produce a text file report')
+group.add_argument('-v', '--verbose', action='store_true', help='Do not print to standard output')
 args = parser.parse_args() # -h for help
 
+host = args.host
 device_type = args.d.lower()
-host = args.h
 username = args.u
 password = args.p
 
@@ -86,10 +90,34 @@ def snmpCheck(host):
 ## MAIN ######################################################
 
 def main():
-    print('\nPython Security Tester\n')
-    print(telnetCheck(host))
-    print(privilegedCheck(host, username, password))
-    print(snmpCheck(host))
+    telnet_result = telnetCheck(host)
+    privileged_result = privilegedCheck(host, username, password)
+    snmp_result = snmpCheck(host)
+    if args.verbose:
+        print('\nPython Security Tester\n')
+        print(telnet_result)
+        print(privileged_result)
+        print(snmp_result)
+
+    if args.report:
+        report(telnet_result, privileged_result, snmp_result)
+
+##############################################################
+## REPORT ####################################################
+
+def report(telnet_result, privileged_result, snmp_result):
+    now = datetime.now()
+    timestamp_format = "%Y-%m-%d %H-%M"
+    timestamp = now.strftime(timestamp_format)
+
+    report = open(f'Report - {timestamp} - Device - {host}.txt','w')
+    report.write(f'Device:\t\t{host}\n')
+    report.write(f'Timestamp:\t\t{timestamp}\n\n')
+    report.write(f'Security Test: Is Telnet enabled?\nResult: {telnet_result}\n\n')
+    report.write(f'Security Test: Is enable protected by a password?\nResult: {privileged_result}\n\n')
+    report.write(f'Security Test: Is SNMPv1 running with a public community string?\nResult: {snmp_result}\n\n')
+    report.close()
+
 
 if __name__ == '__main__':
     main()

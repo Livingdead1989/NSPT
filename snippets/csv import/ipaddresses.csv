@@ -1,5 +1,0 @@
-cisco_router,cisco_ios,192.168.1.1,admin,P@ssword
-cisco_r2,cisco_ios,192.168.2.1,admin,Password
-junoR1,juniper,10.10.200.14,admin,Pa55word
-Juniper_router,juniper,10.10.200.12,admin,pa$$w0rd
-HPE_Switch,hp_procurve,172.16.1.10,admin,PASSWORD
