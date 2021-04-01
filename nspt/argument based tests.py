@@ -16,7 +16,7 @@ group.add_argument('-v', '--verbose', action='store_true', help='Do not print to
 args = parser.parse_args() # -h for help
 
 host = args.host
-device_type = args.d.lower()
+device_type = args.d
 username = args.u
 password = args.p
 
@@ -41,19 +41,19 @@ def privilegedCheck(host, username, password):
 
     try:
         testing_device = {
-        'device_type': device_type,
+        'device_type': device_type.lower(),
         'host':   host,
         'username': username,
         'password': password
         }
 
         connect = ConnectHandler(**testing_device)
-        if device_type in hpe_devices: ## Check for HPE devices which use a different syntax
+        if device_type.lower() in hpe_devices: ## Check for HPE devices which use a different syntax
             command = connect.send_command('show running-config | include password manager')
         else:
             command = connect.send_command('show running-config | include enable secret')
     except:
-        return f'ERROR connecting to device {host} using SSH.'
+        return f'ERROR: connecting to device {host} using SSH.'
     else:
         if 'enable secret' or 'password manager' in command.lower(): ## check for keyword in command output
             return f'PASSED: Privilege Exec mode is protected by a password on {host}.'
