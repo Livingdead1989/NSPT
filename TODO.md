@@ -12,4 +12,4 @@
 - [x] Change to Arugment inputs
 - [x] Verbose and Report options
 - [x] Tested using only positional parameters
-- [ ] User can select report location
+- [x] User can select report location
