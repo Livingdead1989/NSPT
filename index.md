@@ -1,5 +1,3 @@
-# NSPT
-
 **COM617 Project Files - Network device Security Policy Tester application**
 
 The aim of this project is to create a software solution to perform  the automated testing of network equipment to meet the company’s  security policies and to produce a report of the testing.
