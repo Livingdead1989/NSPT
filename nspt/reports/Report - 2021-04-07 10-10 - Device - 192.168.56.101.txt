@@ -1,0 +1,12 @@
+Device:		192.168.56.101
+Timestamp:		2021-04-07 10-10
+
+Security Test: Is Telnet enabled?
+Result: FAILED: Telnet Enabled on 192.168.56.101
+
+Security Test: Is enable protected by a password?
+Result: ERROR: connecting to device 192.168.56.101 using SSH.
+
+Security Test: Is SNMPv1 running with a public community string?
+Result: PASSED: No SNMP response received before timeout on 192.168.56.101.
+

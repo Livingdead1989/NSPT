@@ -1,0 +1,12 @@
+Device:		10.10.200.14
+Timestamp:		2021-04-07 10-07
+
+Security Test: Is Telnet enabled?
+Result: PASSED: Telnet Disabled on 10.10.200.14
+
+Security Test: Is enable protected by a password?
+Result: PASSED: Privilege Exec mode is protected by a password on 10.10.200.14.
+
+Security Test: Is SNMPv1 running with a public community string?
+Result: PASSED: No SNMP response received before timeout on 10.10.200.14.
+

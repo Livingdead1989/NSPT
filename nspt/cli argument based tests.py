@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os, argparse
 from datetime import datetime
-from telnetlib import Telnet
+import telnetlib
 from netmiko import ConnectHandler
 from pysnmp.hlapi import getCmd, SnmpEngine, CommunityData, UdpTransportTarget, ContextData, ObjectType, ObjectIdentity
 
@@ -28,11 +28,12 @@ hpe_devices = ('aruba_os','aruba_osswitch','aruba_procurve','hp_comware','hp_pro
 
 def telnetCheck(host, port=23):
     try:
-        Telnet.open(host,port,timeout=3) ## Timeout to prevent large hang times
+        tn = telnetlib.Telnet(host,timeout=3) ## timeout required to prevent very long wait times
+        tn.read_some()
     except:
         return f'PASSED: Telnet Disabled on {host}'
     else:
-        Telnet.close()
+        tn.close()
         return f'FAILED: Telnet Enabled on {host}'
 
 ##############################################################
