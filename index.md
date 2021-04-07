@@ -41,3 +41,11 @@ We have tested this application on the following devices:
 * Aruba JL256A 2930F
 * HP J9729A 2920
 * HP J8698A 5412 zl 
+
+# Demonstration
+
+A short demonstration of the CLI version in use, this showcases a minimal test just using the device IP address, both verbose and report mode with custom report path. Included in the demonstration are good examples where all tests pass as well as showing error handling and failed devices.
+
+<video controls src="demo_cli_arguments.m4v" style="width:100%;"></video>
+
+Thank you for taking the time to view our project.
