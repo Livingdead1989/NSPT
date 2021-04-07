@@ -57,7 +57,7 @@ def privilegedCheck(host, username, password):
     except:
         return f'ERROR: connecting to device {host} using SSH.'
     else:
-        if 'enable secret' or 'password manager' in command.lower(): ## check for keyword in command output
+        if 'enable secret' in command.lower() or 'password manager' in command.lower(): ## check for keyword in command output
             return f'PASSED: Privilege Exec mode is protected by a password on {host}.'
         elif 'error' in command.lower() or 'invalid' in command.lower(): ## check for error keywords in command output
             return f'ERROR: There has been an error on {host}.'
@@ -95,6 +95,7 @@ def main():
     telnet_result = telnetCheck(host)
     privileged_result = privilegedCheck(host, username, password)
     snmp_result = snmpCheck(host)
+
     
     if args.verbose:
         print('\nPython Security Tester\n')
