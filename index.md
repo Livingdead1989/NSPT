@@ -22,7 +22,7 @@ This project had a few requirements set by the problem giver, these were extract
 
 1. Install [Git](https://git-scm.com/download/win)
 2. Install [Python](https://www.python.org/downloads/)
-3. Install required modules using these commands
+3. Install required modules using pip via the command line with these commands
    1. `pip install netmiko`
    2. `pip install pysnmp`
 4. Clone the GitHub repository `git clone https://github.com/livingdead1989/NSPT`
