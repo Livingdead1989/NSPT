@@ -29,7 +29,10 @@ This project had a few requirements set by the problem giver, these were extract
 5. Move into the cloned repository using the command `cd NSPT/nspt`
 6. Run the script help `python "cli argument based tests.py" -h`
 
-<video src="nspt_running_on_windows.webm"></video>
+<video style="width: 100%;" controls>
+   <source src="nspt_running_on_windows.webm" type="video/webm">
+   <source src="nspt_running_on_windows.mp4" type="video/mp4">
+</video>
 
 # Testing
 
