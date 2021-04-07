@@ -2,7 +2,7 @@
 
 **Network device Security Policy Tester application**
 
-The aim of this project is to create a software solution to perform the automated testing of network equipment to meet the company’s security policies and to produce a report of the testing.
+COM617 project task, the aim of this project was to create a software solution to perform the automated testing of network equipment to meet the company’s security policies and to produce a report of the testing.
 
 # Project Requirements
 
