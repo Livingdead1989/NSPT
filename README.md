@@ -9,16 +9,16 @@ COM617 project task, the aim of this project was to create a software solution t
 This project had a few requirements set by the problem giver, these were extracted from the provided document.
 
 1. The automation platform must perform automated network security tests.
-	2. The tests must check the network device configuration for:
-		3. Telnet must be disabled
-		4. The privileged exec mode password must be configured
-		5. The SNMP v1 community string should not be “public”
-	6. The user must be able to initiate the test manually
-	7. The user must be able to dictate which devices are tested
-8. The automated testing must produce a report of the test results
-	9. The report must show whether each test passed or failed on each device
-	10. Test results must be displayed in a report
-11. The platform must use open source software
+	* The tests must check the network device configuration for:
+		* Telnet must be disabled
+		* The privileged exec mode password must be configured
+		* The SNMP v1 community string should not be “public”
+	* The user must be able to initiate the test manually
+	* The user must be able to dictate which devices are tested
+1. The automated testing must produce a report of the test results
+	* The report must show whether each test passed or failed on each device
+	* Test results must be displayed in a report
+1. The platform must use open source software
 
 # Windows Setup Guide
 
