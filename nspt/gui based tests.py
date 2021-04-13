@@ -88,14 +88,14 @@ class Ui_MainWindow(object):
                     ObjectType(ObjectIdentity('SNMPv2-MIB', 'sysDescr', 0))
                 )
 
-                errorIndication, errorStatus, varBinds = next(iterator)
+                errorIndication, errorStatus, errorIndex, varBinds = next(iterator)
                 if errorIndication:
-                    return f'PASSED: No SNMP response received before timeout on {self.host_device_input.text()}.'
+                    return f'PASSED: No SNMP response received before timeout on {self.host_device_input.text()}'
                 elif errorStatus:
-                    return f'ERROR: There has been an error on {self.host_device_input.text()}.'
+                    return f'ERROR: There has been an error on {self.host_device_input.text()}'
                 else:
                     for varBind in varBinds:
-                        return f'FAILED: SNMP response received on {self.host_device_input.text()}.'
+                        return f'FAILED: SNMP response received on {self.host_device_input.text()}'
             
 
             ######################################################
@@ -126,6 +126,7 @@ class Ui_MainWindow(object):
             report = open(reportPath,'w')
             report.write(f'Device:\t\t{self.host_device_input.text()}\n\n')
             report.write(f'Timestamp:\t\t{timestamp}\n\n')
+            report.write('##########################################################################################################\n\n')
             if self.security_test_telnet_check.isChecked():
                 report.write(f'Security Test: Is Telnet enabled?\t\tResult: {telnet_}\n\n')
                 report.write('##########################################################################################################\n\n')
