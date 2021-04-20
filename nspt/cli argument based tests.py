@@ -5,6 +5,9 @@ import telnetlib
 from netmiko import ConnectHandler
 from pysnmp.hlapi import getCmd, SnmpEngine, CommunityData, UdpTransportTarget, ContextData, ObjectType, ObjectIdentity
 
+##############################################################
+## CREATE ARGUMENTS ##########################################
+
 parser = argparse.ArgumentParser(description='ArgParse')
 parser.add_argument('host', metavar='Host Address', type=str, help='Enter your host device address')
 parser.add_argument('-d', metavar='Device Type', type=str, help='Enter your device type such as cisco_ios')
@@ -15,6 +18,9 @@ group.add_argument('-r', '--report', action='store_true', help='Produce a text f
 parser.add_argument('--path', help='Path where the report should be saved to')
 group.add_argument('-v', '--verbose', action='store_true', help='Do not print to standard output')
 args = parser.parse_args() # -h for help
+
+##############################################################
+## CORE VARIABLES ############################################
 
 host = args.host
 device_type = args.d
@@ -129,6 +135,8 @@ def report(telnet_result, privileged_result, snmp_result):
     report.write(f'Security Test: Is SNMPv1 running with a public community string?\nResult: {snmp_result}\n\n')
     report.close()
 
-
+##############################################################
+## CALL MAIN #################################################
+    
 if __name__ == '__main__':
     main()
